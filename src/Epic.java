@@ -1,22 +1,22 @@
 import java.util.ArrayList;
 
 public class Epic extends Task{
-    protected ArrayList<SubTask> subTaskArrayList;
+    protected ArrayList<Integer> subTaskIdList;
 
     public Epic(String name, String description) {
         this.name = name;
         this.description = description;
-        this.subTaskArrayList = new ArrayList<>();
+        this.subTaskIdList = new ArrayList<>();
 
     }
 
     //метод возвращает список подзадач Эпика
-    public ArrayList<SubTask> getSubTaskArrayList() {
-        return subTaskArrayList;
+    public ArrayList<Integer> getSubTaskIdList() {
+        return subTaskIdList;
     }
 
     //метод устанавливает список подзадач Эпика
-    public void setSubTaskArrayList(ArrayList<SubTask> subTaskArrayList) {
-        this.subTaskArrayList = subTaskArrayList;
+    public void setSubTaskArrayList(ArrayList<Integer> subTaskArrayList) {
+        this.subTaskIdList = subTaskArrayList;
     }
 }

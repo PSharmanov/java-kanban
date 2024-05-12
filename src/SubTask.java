@@ -1,5 +1,5 @@
 public class SubTask extends Task{
-    protected Epic epic;
+    private Epic epic;
 
     public SubTask(String name, String description, Status status, Epic epic) {
         super(name, description, status);
