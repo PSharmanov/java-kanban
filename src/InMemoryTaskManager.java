@@ -1,12 +1,13 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class InMemoryTaskManager implements TaskManager {
     private int idCounter = 1;
-    HashMap<Integer, Task> taskHashMap = new HashMap<>();
-    HashMap<Integer, SubTask> subTaskHashMap = new HashMap<>();
-    HashMap<Integer, Epic> epicHashMap = new HashMap<>();
+    Map<Integer, Task> taskHashMap = new HashMap<>();
+    Map<Integer, SubTask> subTaskHashMap = new HashMap<>();
+    Map<Integer, Epic> epicHashMap = new HashMap<>();
     HistoryManager historyManager = Manager.getDefaultHistory();
 
     //генератор Id
@@ -28,7 +29,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     //обновление Задачи
     @Override
-    public int updateTask(Task task) {
+    public void updateTask(Task task) {
 
         if (taskHashMap.containsKey(task.getId())){
             taskHashMap.put(task.getId(), task);
@@ -36,15 +37,12 @@ public class InMemoryTaskManager implements TaskManager {
         } else {
             System.out.println("ERROR: Задача с именем: " + task.getName() + "  не обновлена," +
                     " нет задачи с id: " + task.getId());
-            return -1;
         }
-
-        return 0;
     }
 
     //получение списка всех Задач
     @Override
-    public ArrayList<Task> getListAllTasks() {
+    public List<Task> getListAllTasks() {
         return new ArrayList<> (taskHashMap.values());
     }
 
@@ -97,15 +95,13 @@ public class InMemoryTaskManager implements TaskManager {
 
             newEpic.setStatus(chekingStatus(newSubTaskList));
 
-
-
         }
         return 0;
     }
 
     //обнавление Подзадачи
     @Override
-    public int updateSubTask(SubTask subTask) {
+    public void updateSubTask(SubTask subTask) {
 
         if(subTaskHashMap.containsKey(subTask.getId())){
 
@@ -123,19 +119,16 @@ public class InMemoryTaskManager implements TaskManager {
 
             newEpic.setStatus(chekingStatus(newSubTaskList));
 
-            return 0;
-
         } else {
             System.out.println("ERROR: Подзадача с именем: " + subTask.name + "  не обновлена, для подзадачи" +
-                    " нет Эпика с id: " + subTask.getEpic().getId());
-            return -1;
+                    " нет Эпика.");
         }
 
     }
 
     //получение списка всех Подзадач
     @Override
-    public ArrayList<SubTask> getListAllSubTasks() {
+    public List<SubTask> getListAllSubTasks() {
         return new ArrayList<>(subTaskHashMap.values());
     }
 
@@ -172,7 +165,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     //удаление Подзадачи по Id
     @Override
-    public int deletingSubTaskById(Integer id) {
+    public void deletingSubTaskById(Integer id) {
 
         if (subTaskHashMap.containsKey(id)) {
 
@@ -188,11 +181,7 @@ public class InMemoryTaskManager implements TaskManager {
 
             subTaskHashMap.remove(id);
 
-            return 0;
-        } else {
-            return -1;
         }
-
 
     }
 
@@ -227,7 +216,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     //получение списка всех Эпиков
     @Override
-    public ArrayList<Epic> getListAllEpic() {
+    public List<Epic> getListAllEpic() {
 
         return new ArrayList<>(epicHashMap.values());
     }
@@ -266,7 +255,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     //получение списка подзадач по Id эпика
     @Override
-    public ArrayList<Integer> getListAllSubTaskByEpicId(int idEpic){
+    public List<Integer> getListAllSubTaskByEpicId(int idEpic){
 
         Epic epic = getEpicById(idEpic);
 

@@ -63,10 +63,12 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldNotUpdateTask() {
-        Task task1 = new Task("Задача 2", "Описание задачи2",Status.DONE);
-        task1.setId(3);
-        assertNotEquals(task1, taskManager.getTaskById(3));
-        assertEquals(-1,taskManager.updateTask(task1));
+        String taskBefore = taskManager.getTaskById(1).toString();
+        Task taskNew = new Task("Задача1", "Описание задачи 1", Status.NEW);
+        taskNew.setId(7);
+        taskManager.updateTask(taskNew);
+        String taskAfter = taskManager.getTaskById(1).toString();
+        assertEquals(taskBefore, taskAfter);
 
     }
 
@@ -115,9 +117,16 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldNotUpdateSubTask() {
-        SubTask subTask = taskManager.getSubTaskById(5);
-        subTask.setId(10);
-        assertEquals(-1, taskManager.updateSubTask(subTask));
+        int hasCodeBefore = taskManager.getSubTaskById(5).hashCode();
+        SubTask subTaskNew = new SubTask(
+                "Подзадача 1",
+                "Описание подзадачи 1",
+                Status.NEW,
+                taskManager.getEpicById(5));
+        subTaskNew.setId(10);
+        taskManager.updateSubTask(subTaskNew);
+        int hasCodeAfter = taskManager.getSubTaskById(5).hashCode();
+        assertEquals(hasCodeBefore, hasCodeAfter);
 
     }
 
@@ -129,7 +138,7 @@ class InMemoryTaskManagerTest {
         taskManager.createEpic(epic1);
         SubTask subTask2 = new SubTask("Подзадача Новая", "Описание подзадачи 1", Status.NEW, epic1);
         subTask2.setId(5);
-        assertEquals(0, taskManager.updateSubTask(subTask2));
+        taskManager.updateSubTask(subTask2);
         assertEquals("Подзадача Новая",taskManager.getSubTaskById(5).getName());
 
     }
@@ -148,7 +157,6 @@ class InMemoryTaskManagerTest {
         assertNotNull(taskManager.getSubTaskById(5));
         taskManager.deletingSubTaskById(5);
         assertNull(taskManager.getSubTaskById(5));
-        assertEquals(-1,taskManager.deletingSubTaskById(10));
 
     }
 

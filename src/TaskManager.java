@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.List;
 
 public interface TaskManager {
@@ -6,10 +5,10 @@ public interface TaskManager {
     void createTask(Task task);
 
     //обновление Задачи
-    int updateTask(Task task);
+    void updateTask(Task task);
 
     //получение списка всех Задач
-    ArrayList<Task> getListAllTasks();
+    List<Task> getListAllTasks();
 
     //получение Задачи по Id
     Task getTaskById(int id);
@@ -24,10 +23,10 @@ public interface TaskManager {
     int createSubTask(SubTask subTask);
 
     //обнавление Подзадачи
-    int updateSubTask(SubTask subTask);
+    void updateSubTask(SubTask subTask);
 
     //получение списка всех Подзадач
-    ArrayList<SubTask> getListAllSubTasks();
+    List<SubTask> getListAllSubTasks();
 
     //получение Подзадачи по Id
     SubTask getSubTaskById(int id);
@@ -36,7 +35,7 @@ public interface TaskManager {
     void deletingAllSubTasks();
 
     //удаление Подзадачи по Id
-   int deletingSubTaskById(Integer id);
+   void deletingSubTaskById(Integer id);
 
     //создание Эпик
     void createEpic(Epic epic);
@@ -45,7 +44,7 @@ public interface TaskManager {
     void updateEpic(Epic epic);
 
     //получение списка всех Эпиков
-    ArrayList<Epic> getListAllEpic();
+    List<Epic> getListAllEpic();
 
     //получение Эпика по Id
     Epic getEpicById(int id);
@@ -57,7 +56,7 @@ public interface TaskManager {
     void deletingEpicById(int id);
 
     //получение списка подзадач по Id эпика
-    ArrayList<Integer> getListAllSubTaskByEpicId(int idEpic);
+    List<Integer> getListAllSubTaskByEpicId(int idEpic);
 
     //получение списка последних 10 просмотренных задач
     List<Task> getHistory ();
