@@ -31,7 +31,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateTask(Task task) {
 
-        if (taskHashMap.containsKey(task.getId())){
+        if (taskHashMap.containsKey(task.getId())) {
             taskHashMap.put(task.getId(), task);
 
         } else {
@@ -43,7 +43,7 @@ public class InMemoryTaskManager implements TaskManager {
     //получение списка всех Задач
     @Override
     public List<Task> getListAllTasks() {
-        return new ArrayList<> (taskHashMap.values());
+        return new ArrayList<>(taskHashMap.values());
     }
 
     //получение Задачи по Id
@@ -51,7 +51,9 @@ public class InMemoryTaskManager implements TaskManager {
     public Task getTaskById(int id) {
 
         //добавление в историю задач
-        if (taskHashMap.get(id) != null) { historyManager.addHistory(taskHashMap.get(id));}
+        if (taskHashMap.get(id) != null) {
+            historyManager.addHistory(taskHashMap.get(id));
+        }
 
         return taskHashMap.get(id);
     }
@@ -103,7 +105,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateSubTask(SubTask subTask) {
 
-        if(subTaskHashMap.containsKey(subTask.getId())){
+        if (subTaskHashMap.containsKey(subTask.getId())) {
 
             subTaskHashMap.put(subTask.getId(), subTask);
 
@@ -138,7 +140,9 @@ public class InMemoryTaskManager implements TaskManager {
 
         if (subTaskHashMap.containsKey(id)) {
             //добавление в историю задач
-            if (subTaskHashMap.get(id) != null) { historyManager.addHistory(subTaskHashMap.get(id));}
+            if (subTaskHashMap.get(id) != null) {
+                historyManager.addHistory(subTaskHashMap.get(id));
+            }
 
             return subTaskHashMap.get(id);
         }
@@ -150,7 +154,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deletingAllSubTasks() {
 
-        for (Epic epic : epicHashMap.values()){
+        for (Epic epic : epicHashMap.values()) {
 
             ArrayList<Integer> list = epic.getSubTaskIdList();
 
@@ -204,7 +208,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateEpic(Epic epic) {
 
-        ArrayList <Integer> list = epic.getSubTaskIdList();
+        ArrayList<Integer> list = epic.getSubTaskIdList();
 
         Status newEpicStatus = chekingStatus(list);
 
@@ -226,7 +230,9 @@ public class InMemoryTaskManager implements TaskManager {
     public Epic getEpicById(int id) {
 
         //добавление в историю задач
-        if (epicHashMap.get(id) != null) { historyManager.addHistory(epicHashMap.get(id));}
+        if (epicHashMap.get(id) != null) {
+            historyManager.addHistory(epicHashMap.get(id));
+        }
 
         return epicHashMap.get(id);
     }
@@ -244,7 +250,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deletingEpicById(int id) {
 
-        for (Integer subTaskId : getListAllSubTaskByEpicId(id)){
+        for (Integer subTaskId : getListAllSubTaskByEpicId(id)) {
 
             subTaskHashMap.remove(subTaskId);
         }
@@ -255,7 +261,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     //получение списка подзадач по Id эпика
     @Override
-    public List<Integer> getListAllSubTaskByEpicId(int idEpic){
+    public List<Integer> getListAllSubTaskByEpicId(int idEpic) {
 
         Epic epic = getEpicById(idEpic);
 
@@ -263,27 +269,33 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     //проверка статуса
-    public Status chekingStatus(ArrayList<Integer> list){
+    public Status chekingStatus(ArrayList<Integer> list) {
 
         int Done = 0;
         int New = 0;
 
-        if (list.isEmpty()){ return Status.NEW;}
+        if (list.isEmpty()) {
+            return Status.NEW;
+        }
 
-        for (Integer subTaskId : list){
+        for (Integer subTaskId : list) {
 
-            if (getSubTaskById(subTaskId).getStatus().equals(Status.DONE)){
+            if (getSubTaskById(subTaskId).getStatus().equals(Status.DONE)) {
                 Done++;
             }
 
-            if (getSubTaskById(subTaskId).getStatus().equals(Status.NEW)){
+            if (getSubTaskById(subTaskId).getStatus().equals(Status.NEW)) {
                 New++;
             }
         }
 
-        if (Done == list.size()){return Status.DONE;}
+        if (Done == list.size()) {
+            return Status.DONE;
+        }
 
-        if (New == list.size()){return Status.NEW;}
+        if (New == list.size()) {
+            return Status.NEW;
+        }
 
         return Status.IN_PROGRESS;
     }

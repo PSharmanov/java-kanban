@@ -35,7 +35,7 @@ public interface TaskManager {
     void deletingAllSubTasks();
 
     //удаление Подзадачи по Id
-   void deletingSubTaskById(Integer id);
+    void deletingSubTaskById(Integer id);
 
     //создание Эпик
     void createEpic(Epic epic);
@@ -59,5 +59,5 @@ public interface TaskManager {
     List<Integer> getListAllSubTaskByEpicId(int idEpic);
 
     //получение списка последних 10 просмотренных задач
-    List<Task> getHistory ();
+    List<Task> getHistory();
 }

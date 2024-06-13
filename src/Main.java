@@ -2,7 +2,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-       TaskManager taskManager = Manager.getDefaultTaskManager();
+        TaskManager taskManager = Manager.getDefaultTaskManager();
 
         printAllTasks(taskManager);
 

@@ -6,7 +6,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     //метод добавления задач в список
     @Override
     public void addHistory(Task task) {
-        if (history.containsKey(task.getId())){
+        if (history.containsKey(task.getId())) {
             linkLast(task);
             removeNode(history.get(task.getId()));
         } else {
@@ -44,7 +44,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     private Node tail;
 
     //метод добавления ноды в конец списка
-    void linkLast (Task task) {
+    void linkLast(Task task) {
 
         final Node oldTail = tail;
         final Node newNode = new Node(tail, task, null);
@@ -65,7 +65,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         final Node prev = node.prev;
         final Node next = node.next;
 
-        if(prev == null) {
+        if (prev == null) {
             next.prev = null;
         } else {
             prev.next = next;
@@ -82,9 +82,9 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     //возвращает список задач из двусвязного списка
     public List<Task> getTask() {
-       List <Task> list = new ArrayList<>();
+        List<Task> list = new ArrayList<>();
 
-        for (Node<Task>  node : history.values()) {
+        for (Node<Task> node : history.values()) {
             list.add(node.task);
         }
 
