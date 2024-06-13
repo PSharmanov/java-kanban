@@ -271,8 +271,8 @@ public class InMemoryTaskManager implements TaskManager {
     //проверка статуса
     public Status chekingStatus(ArrayList<Integer> list) {
 
-        int Done = 0;
-        int New = 0;
+        int countDone = 0;
+        int countNew = 0;
 
         if (list.isEmpty()) {
             return Status.NEW;
@@ -281,19 +281,19 @@ public class InMemoryTaskManager implements TaskManager {
         for (Integer subTaskId : list) {
 
             if (getSubTaskById(subTaskId).getStatus().equals(Status.DONE)) {
-                Done++;
+                countDone++;
             }
 
             if (getSubTaskById(subTaskId).getStatus().equals(Status.NEW)) {
-                New++;
+                countNew++;
             }
         }
 
-        if (Done == list.size()) {
+        if (countDone == list.size()) {
             return Status.DONE;
         }
 
-        if (New == list.size()) {
+        if (countNew == list.size()) {
             return Status.NEW;
         }
 
