@@ -3,15 +3,19 @@ import java.util.*;
 public class InMemoryHistoryManager implements HistoryManager {
     Map<Integer, Node<Task>> history = new HashMap<>();
 
+    //переменные для реализации двусвязного списка
+    private Node head;
+    private Node tail;
+
     //метод добавления задач в список
     @Override
     public void addHistory(Task task) {
         if (history.containsKey(task.getId())) {
-            linkLast(task);
             removeNode(history.get(task.getId()));
-        } else {
-            linkLast(task);
         }
+        linkLast(task);
+
+
     }
 
     //удаление истории по id задачи
@@ -27,31 +31,15 @@ public class InMemoryHistoryManager implements HistoryManager {
         return getTask();
     }
 
-    //класс объектов двусвязного списка истории
-    static class Node<E> {
-        public E task;
-        public Node<E> next;
-        public Node<E> prev;
-
-        public Node(Node<E> prev, E task, Node<E> next) {
-            this.task = task;
-            this.next = next;
-            this.prev = prev;
-
-        }
-    }
-
-    private Node tail;
-
     //метод добавления ноды в конец списка
-    void linkLast(Task task) {
+    private void linkLast(Task task) {
 
         final Node oldTail = tail;
         final Node newNode = new Node(tail, task, null);
         tail = newNode;
 
         if (oldTail == null) {
-            tail = newNode;
+            head = newNode;
         } else {
             oldTail.next = newNode;
         }
@@ -59,37 +47,55 @@ public class InMemoryHistoryManager implements HistoryManager {
         history.put(task.getId(), newNode);
     }
 
-
     //метод удаления ноды
-    void removeNode(Node node) {
+    private void removeNode(Node node) {
         final Node prev = node.prev;
         final Node next = node.next;
 
+        if (prev == null && next == null) {
+            head = null;
+            tail = null;
+            return;
+        }
+
         if (prev == null) {
-            next.prev = null;
+            head = next;
         } else {
             prev.next = next;
-            node.prev = null;
         }
 
         if (next == null) {
-            prev.next = null;
+            tail = prev;
         } else {
             next.prev = prev;
-            node.next = null;
         }
+
     }
 
     //возвращает список задач из двусвязного списка
     public List<Task> getTask() {
         List<Task> list = new ArrayList<>();
 
-        for (Node<Task> node : history.values()) {
-            list.add(node.task);
+        for (Node node = head; node != null; node = node.next) {
+            list.add((Task) node.task);
         }
 
         return list;
     }
+
+    //класс объектов двусвязного списка истории
+    static class Node<Task> {
+        public Task task;
+        public Node<Task> next;
+        public Node<Task> prev;
+
+        public Node(Node<Task> prev, Task task, Node<Task> next) {
+            this.task = task;
+            this.next = next;
+            this.prev = prev;
+        }
+    }
+
 }
 
 

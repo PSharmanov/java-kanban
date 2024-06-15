@@ -1,6 +1,7 @@
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -8,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class InMemoryHistoryManagerTest {
 
     static HistoryManager historyManager;
+    static List<Task> listOne;
 
     @BeforeAll
     static void beforeAll() {
@@ -18,6 +20,7 @@ class InMemoryHistoryManagerTest {
         task1.setId(1);
         task2.setId(2);
         task3.setId(3);
+        listOne = List.of(task1, task2, task3);
         historyManager.addHistory(task1);
         historyManager.addHistory(task2);
         historyManager.addHistory(task3);
@@ -32,6 +35,7 @@ class InMemoryHistoryManagerTest {
 
     }
 
+
     @Test
     void removeHistoryByIdTask() {
         List<Task> history = historyManager.getHistory();
@@ -44,11 +48,10 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void getHistory() {
-        List<Task> history = null;
-        assertNull(history);
-        history = historyManager.getHistory();
-        assertNotNull(history);
+    void shouldGetHistory() {
+        assertEquals(listOne.get(0), historyManager.getHistory().get(0));
+        assertEquals(listOne.get(1), historyManager.getHistory().get(1));
+        assertEquals(listOne.get(2), historyManager.getHistory().get(2));
 
     }
 
