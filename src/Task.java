@@ -36,6 +36,18 @@ public class Task {
         return name;
     }
 
+    public TypeTasks getTypeTasks() {
+        return TypeTasks.TASK;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     @Override
     public String toString() {
         return "Task{" +

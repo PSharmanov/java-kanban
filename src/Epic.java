@@ -19,4 +19,10 @@ public class Epic extends Task {
     public void setSubTaskArrayList(ArrayList<Integer> subTaskArrayList) {
         this.subTaskIdList = subTaskArrayList;
     }
+
+    //возвращает тип задачи
+    @Override
+    public TypeTasks getTypeTasks() {
+        return TypeTasks.EPIC;
+    }
 }

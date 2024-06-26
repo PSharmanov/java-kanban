@@ -20,7 +20,7 @@ public interface TaskManager {
     void deletingTaskById(int id);
 
     //создание Подзадачи
-    int createSubTask(SubTask subTask);
+    void createSubTask(SubTask subTask);
 
     //обнавление Подзадачи
     void updateSubTask(SubTask subTask);

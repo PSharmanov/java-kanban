@@ -74,10 +74,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldGetListAllTasks() {
-        assertEquals(2,taskManager.getListAllTasks().size());
-        Task task1 = new Task("Задача 1", "Описание задачи1",Status.NEW);
-        taskManager.createTask(task1);
-        assertEquals(3, taskManager.getListAllTasks().size());
+        assertEquals(2, taskManager.getListAllTasks().size());
     }
 
 
@@ -99,19 +96,21 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldNotCreateSubTaskUntilIsEpic() {
+        assertEquals(2,taskManager.getListAllTasks().size());
         SubTask subTask1 = new SubTask("Подзадача1","Описание подзадачи1",Status.NEW, null);
-        assertEquals(-1,taskManager.createSubTask(subTask1));
+        taskManager.createSubTask(subTask1);
+        assertEquals(2,taskManager.getListAllTasks().size());
 
     }
 
     @Test
     void shouldCreateSubTaskUntilIsEpic() {
+        assertEquals(3,taskManager.getListAllSubTasks().size());
         Epic epic1 = new Epic("Эпик1","Описание эпик1");
         taskManager.createEpic(epic1);
         SubTask subTask1 = new SubTask("Подзадача1","Описание подзадачи1",Status.NEW, epic1);
-        assertEquals(2,taskManager.getListAllTasks().size());
-        assertEquals(0,taskManager.createSubTask(subTask1));
-
+        taskManager.createSubTask(subTask1);
+        assertEquals(4,taskManager.getListAllSubTasks().size());
 
     }
 

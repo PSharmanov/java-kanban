@@ -15,7 +15,11 @@ public class InMemoryTaskManager implements TaskManager {
         return idCounter++;
     }
 
-//////////////////////////////////////////////////////////////////////////////////
+    public void setIdCounter(int idCounter) {
+        this.idCounter = idCounter;
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////
     // Task
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -76,11 +80,12 @@ public class InMemoryTaskManager implements TaskManager {
 
     //создание Подзадачи
     @Override
-    public int createSubTask(SubTask subTask) {
+    public void createSubTask(SubTask subTask) {
 
         if (subTask.getEpic() == null) {
             System.out.println("ERROR: для Подзадачи не найден Эпик ");
-            return -1;
+            return;
+
         }
 
         if (epicHashMap.containsKey(subTask.getEpic().getId())) {
@@ -98,7 +103,7 @@ public class InMemoryTaskManager implements TaskManager {
             newEpic.setStatus(chekingStatus(newSubTaskList));
 
         }
-        return 0;
+
     }
 
     //обнавление Подзадачи

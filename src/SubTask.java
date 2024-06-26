@@ -9,4 +9,9 @@ public class SubTask extends Task {
     public Epic getEpic() {
         return epic;
     }
+
+    @Override
+    public TypeTasks getTypeTasks() {
+        return TypeTasks.SUBTASK;
+    }
 }
