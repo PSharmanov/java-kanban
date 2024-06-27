@@ -1,6 +1,5 @@
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
@@ -38,11 +37,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     // сохранение текущего состояния менеджера в файл
     private void save() {
         if (!file.exists()) {
-            try {
-                Files.createFile(file.toPath());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            throw new ManagerSaveException("Файл для сохранения данных менеджера не найден!");
         }
 
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8))) {
@@ -96,8 +91,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 SubTask newSubTask = new SubTask(name, description, status, epic);
                 newSubTask.setId(id);
                 return newSubTask;
+            default:
+                throw new ManagerSaveException("Тип задачи не определен!");
         }
-        return null;
     }
 
     // преобразование задачи в строку для сохранения в файл
@@ -130,7 +126,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     //восстановление данных менеджера из файла
-    static FileBackedTaskManager loadFromFile(File file) throws ManagerSaveException {
+    public static FileBackedTaskManager loadFromFile(File file) {
         if (!file.exists()) {
             throw new ManagerSaveException("Файл данных для менеджера не найден!");
         }
@@ -152,22 +148,20 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 Task task = manager.fromString(line);
 
                 //восстановление последнего значение счетчика id
-                if (task != null && task.getId() > idCounter) {
+                if (task.getId() > idCounter) {
                     manager.setIdCounter(task.getId());
                 }
 
-                if (task != null) {
-                    switch (task.getTypeTasks()) {
-                        case TASK:
-                            manager.taskHashMap.put(task.getId(), task);
-                            break;
-                        case EPIC:
-                            manager.epicHashMap.put(task.getId(), (Epic) task);
-                            break;
-                        case SUBTASK:
-                            manager.subTaskHashMap.put(task.getId(), (SubTask) task);
-                            break;
-                    }
+                switch (task.getTypeTasks()) {
+                    case TASK:
+                        manager.taskHashMap.put(task.getId(), task);
+                        break;
+                    case EPIC:
+                        manager.epicHashMap.put(task.getId(), (Epic) task);
+                        break;
+                    case SUBTASK:
+                        manager.subTaskHashMap.put(task.getId(), (SubTask) task);
+                        break;
                 }
 
             }
