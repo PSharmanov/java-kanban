@@ -1,4 +1,5 @@
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -11,8 +12,8 @@ class InMemoryHistoryManagerTest {
     static HistoryManager historyManager;
     static List<Task> listOne;
 
-    @BeforeAll
-    static void beforeAll() {
+    @BeforeEach
+    void setUp() {
         historyManager = Manager.getDefaultHistory();
         Task task1 = new Task("Задача 1 ", "Задача 1", Status.NEW);
         Task task2 = new Task("Задача 2 ", "Задача 2", Status.NEW);
@@ -24,7 +25,6 @@ class InMemoryHistoryManagerTest {
         historyManager.addHistory(task1);
         historyManager.addHistory(task2);
         historyManager.addHistory(task3);
-
     }
 
     @Test
@@ -55,4 +55,11 @@ class InMemoryHistoryManagerTest {
 
     }
 
+    @Test
+    void shouldTrueHistoryIsEmpty() {
+        historyManager.remove(1);
+        historyManager.remove(2);
+        historyManager.remove(3);
+        assertTrue(historyManager.getHistory().isEmpty());
+    }
 }

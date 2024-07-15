@@ -60,4 +60,7 @@ public interface TaskManager {
 
     //получение списка последних 10 просмотренных задач
     List<Task> getHistory();
+
+    //возвращает список задач и подзадач в порядке возрастания startTime
+    List<Task> getPrioritizedTasks();
 }

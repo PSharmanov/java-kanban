@@ -1,3 +1,7 @@
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Formatter;
 import java.util.Objects;
 
 public class Task {
@@ -5,6 +9,9 @@ public class Task {
     protected String description;
     protected int id;
     protected Status status;
+    protected Duration duration;
+    protected LocalDateTime startTime;
+    final DateTimeFormatter DATA_TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy");
 
     public Task() {
 
@@ -70,4 +77,32 @@ public class Task {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        if (startTime == null) {
+            return null;
+        } else if (duration == null) {
+            return startTime;
+        }
+
+        return startTime.plus(duration);
+    }
+
+
 }

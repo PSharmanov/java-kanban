@@ -1,7 +1,6 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
     private int idCounter = 1;
@@ -9,6 +8,7 @@ public class InMemoryTaskManager implements TaskManager {
     Map<Integer, SubTask> subTaskHashMap = new HashMap<>();
     Map<Integer, Epic> epicHashMap = new HashMap<>();
     HistoryManager historyManager = Manager.getDefaultHistory();
+    Set<Task> prioritizedTasksSet = new TreeSet<>(comparatorTaskSet);
 
     //генератор Id
     public int getIdGenerator() {
@@ -26,17 +26,24 @@ public class InMemoryTaskManager implements TaskManager {
     //создание Задачи
     @Override
     public void createTask(Task task) {
-        task.setId(getIdGenerator());
 
-        taskHashMap.put(task.getId(), task);
+        if (checkingIntersectionTask(task)) {
+            System.out.println("Задача не создана, задачи имеют пересечение по времени.");
+        } else {
+            task.setId(getIdGenerator());
+            taskHashMap.put(task.getId(), task);
+            prioritizedTasksSet.add(task);
+        }
+
     }
 
     //обновление Задачи
     @Override
     public void updateTask(Task task) {
 
-        if (taskHashMap.containsKey(task.getId())) {
+        if (checkingIntersectionTask(task) && taskHashMap.containsKey(task.getId())) {
             taskHashMap.put(task.getId(), task);
+            prioritizedTasksSet.add(task);
 
         } else {
             System.out.println("ERROR: Задача с именем: " + task.getName() + "  не обновлена," +
@@ -88,7 +95,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         }
 
-        if (epicHashMap.containsKey(subTask.getEpic().getId())) {
+        if (!checkingIntersectionTask(subTask) && epicHashMap.containsKey(subTask.getEpic().getId())) {
 
             subTask.setId(getIdGenerator());
 
@@ -100,7 +107,13 @@ public class InMemoryTaskManager implements TaskManager {
 
             newSubTaskList.add(subTask.getId());
 
-            newEpic.setStatus(chekingStatus(newSubTaskList));
+            newEpic.setStatus(chekingStatus(newSubTaskList)); //присвоение статуса эпика
+
+            newEpic.setDuration(durationByEpic(newSubTaskList)); //присвоение длительности эпика
+
+            newEpic.setEndTime(endTimeByEpic(newSubTaskList));//присвоение времени окончания эпика
+
+            prioritizedTasksSet.add(subTask);
 
         }
 
@@ -110,7 +123,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateSubTask(SubTask subTask) {
 
-        if (subTaskHashMap.containsKey(subTask.getId())) {
+        if (!checkingIntersectionTask(subTask) && subTaskHashMap.containsKey(subTask.getId())) {
 
             subTaskHashMap.put(subTask.getId(), subTask);
 
@@ -124,7 +137,13 @@ public class InMemoryTaskManager implements TaskManager {
 
             newEpic.setSubTaskArrayList(newSubTaskList);
 
-            newEpic.setStatus(chekingStatus(newSubTaskList));
+            newEpic.setStatus(chekingStatus(newSubTaskList)); //присвоение статуса эпика
+
+            newEpic.setDuration(durationByEpic(newSubTaskList)); //присвоение длительности эпика
+
+            newEpic.setEndTime(endTimeByEpic(newSubTaskList));//присвоение времени окончания эпика
+
+            prioritizedTasksSet.add(subTask);
 
         } else {
             System.out.println("ERROR: Подзадача с именем: " + subTask.name + "  не обновлена, для подзадачи" +
@@ -308,6 +327,76 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public List<Task> getHistory() {
         return historyManager.getHistory();
+    }
+
+    //компаратор для сортировки задач при добавлении в набор
+    static final Comparator<Task> comparatorTaskSet = (task1, task2) -> {
+
+        LocalDateTime startTime1 = task1.getStartTime();
+        LocalDateTime startTime2 = task2.getEndTime();
+
+        if (startTime1 == null || startTime2 == null) {
+            return 0;
+        }
+
+        if (startTime1.isBefore(startTime2)) {
+            return -1;
+        } else if (startTime1.isAfter(startTime2)) {
+            return 1;
+        } else {
+            return 0;
+        }
+
+    };
+
+    @Override
+    public List<Task> getPrioritizedTasks() {
+        return prioritizedTasksSet.stream().toList();
+    }
+
+    //проверка на пересечение двух задач
+    public boolean checkingIntersectionTask(Task newTask) {
+        LocalDateTime newTaskStartTime = newTask.getStartTime();
+        LocalDateTime newTaskEndTime = newTask.getEndTime();
+
+        if ((newTaskStartTime == null) || prioritizedTasksSet.isEmpty()) {
+            return false;
+        }
+
+        return prioritizedTasksSet.stream()
+                .anyMatch(existingTask -> {
+                    LocalDateTime existingTaskStartTime = existingTask.getStartTime();
+                    LocalDateTime existingTaskEndTime = existingTask.getEndTime();
+
+                    if (existingTaskStartTime == null) {
+                        return false;
+                    }
+
+                    // Проверка на пересечение
+                    return (newTaskStartTime.isBefore(existingTaskEndTime) && newTaskEndTime.isAfter(existingTaskStartTime));
+                });
+    }
+
+    //вычисление длительности Эпика
+    public Duration durationByEpic(ArrayList<Integer> list) {
+        return list.stream()
+                .map(id -> subTaskHashMap.get(id))
+                .map(SubTask::getDuration)
+                .filter(Objects::nonNull)
+                .reduce(Duration::plus)
+                .orElse(Duration.ZERO);
+    }
+
+
+    //вычисление времени окончания эпика
+    public LocalDateTime endTimeByEpic(ArrayList<Integer> list) {
+        return list.stream()
+                .map(id -> subTaskHashMap.get(id))
+                .map(SubTask::getEndTime)
+                .filter(Objects::nonNull)
+                .max(Comparator.naturalOrder())
+                .orElse(null);
+
     }
 
 }

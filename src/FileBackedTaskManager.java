@@ -1,44 +1,19 @@
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private final File file;
-    private static final String HEAD_FILE = "id,type,name,status,description,epic";
+    private static final String HEAD_FILE = "id,type,name,status,description,start,duration,end,epic";
 
     public FileBackedTaskManager(File file) {
         this.file = file;
     }
 
-    // дополнительное задание спринт 7, реализовано в main()
-//    public static void main(String[] args) {
-//        FileBackedTaskManager firstManager = Manager.getDefaultFileBackedTaskManager();
-//
-//        firstManager.createTask(new Task("Задача1", "Описание задачи1", Status.NEW));
-//        firstManager.createTask(new Task("Задача2", "Описание задачи2", Status.IN_PROGRESS));
-//        firstManager.createTask(new Task("Задача3", "Описание задачи3", Status.DONE));
-//
-//        firstManager.createEpic(new Epic("Эпик1", "Описание эпик1"));
-//        firstManager.createEpic(new Epic("Эпик2", "Описание эпик2"));
-//        firstManager.createEpic(new Epic("Эпик3", "Описание эпик3"));
-//
-//        firstManager.createSubTask(new SubTask("Подзадача1", "Описание подзадачи1", Status.NEW, firstManager.getEpicById(4)));
-//        firstManager.createSubTask(new SubTask("Подзадача2", "Описание подзадачи2", Status.DONE, firstManager.getEpicById(4)));
-//        firstManager.createSubTask(new SubTask("Подзадача3", "Описание подзадачи3", Status.NEW, firstManager.getEpicById(5)));
-//
-//        FileBackedTaskManager newManager = FileBackedTaskManager.loadFromFile(new File("src/FileBackedTaskManager.csv"));
-//
-//        System.out.println(newManager.getListAllTasks());
-//        System.out.println(newManager.getListAllEpic());
-//        System.out.println(newManager.getListAllSubTasks());
-//
-//    }
-
     // сохранение текущего состояния менеджера в файл
-    private void save() {
-        if (!file.exists()) {
-            throw new ManagerSaveException("Файл для сохранения данных менеджера не найден!");
-        }
+    void save() {
 
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8))) {
 
@@ -46,17 +21,17 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             bw.newLine();
 
             for (Task task : taskHashMap.values()) {
-                bw.write(toString(task));
+                bw.write(converterTasktoString(task));
                 bw.newLine();
             }
 
             for (Epic task : epicHashMap.values()) {
-                bw.write(toString(task));
+                bw.write(converterTasktoString(task));
                 bw.newLine();
             }
 
             for (SubTask task : subTaskHashMap.values()) {
-                bw.write(toString(task));
+                bw.write(converterTasktoString(task));
                 bw.newLine();
             }
 
@@ -86,7 +61,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 newEpic.setId(id);
                 return newEpic;
             case SUBTASK:
-                int epicId = Integer.parseInt(lineArray[5]);
+                int epicId = Integer.parseInt(lineArray[8]);
                 Epic epic = epicHashMap.get(epicId);
                 SubTask newSubTask = new SubTask(name, description, status, epic);
                 newSubTask.setId(id);
@@ -97,39 +72,29 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     // преобразование задачи в строку для сохранения в файл
-    private String toString(Task task) {
-        return task.getId() + "," +
-                task.getTypeTasks() + "," +
-                task.getName() + "," +
-                task.getStatus() + "," +
-                task.getDescription() + ",";
-    }
+    private String converterTasktoString(Task task) {
+        StringBuilder sb = new StringBuilder();
 
-    // преобразование задачи в строку для сохранения в файл
-    private String toString(Epic task) {
-        return task.getId() + "," +
-                task.getTypeTasks() + "," +
-                task.getName() + "," +
-                task.getStatus() + "," +
-                task.getDescription() + ",";
-    }
+        sb.append(task.getId()).append(",");
+        sb.append(task.getTypeTasks()).append(",");
+        sb.append(task.getName()).append(",");
+        sb.append(task.getStatus()).append(",");
+        sb.append(task.getDescription()).append(",");
+        sb.append(task.getStartTime()).append(",");
+        sb.append(task.getDuration()).append(",");
+        sb.append(task.getEndTime() == null ? "null" : task.getEndTime()).append(",");
 
+        if (task instanceof SubTask) {
+            sb.append(((SubTask) task).getEpic().getId());
+        } else {
+            sb.append(",");
+        }
 
-    // преобразование задачи в строку для сохранения в файл
-    private String toString(SubTask task) {
-        return task.getId() + "," +
-                task.getTypeTasks() + "," +
-                task.getName() + "," +
-                task.getStatus() + "," +
-                task.getDescription() + "," +
-                task.getEpic().getId();
+        return sb.toString();
     }
 
     //восстановление данных менеджера из файла
     public static FileBackedTaskManager loadFromFile(File file) {
-        if (!file.exists()) {
-            throw new ManagerSaveException("Файл данных для менеджера не найден!");
-        }
 
         int idCounter = 0;
 

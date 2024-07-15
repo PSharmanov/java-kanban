@@ -15,7 +15,6 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
         linkLast(task);
 
-
     }
 
     //удаление истории по id задачи
