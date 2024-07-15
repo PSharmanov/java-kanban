@@ -1,7 +1,6 @@
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Formatter;
 import java.util.Objects;
 
 public class Task {
@@ -11,7 +10,7 @@ public class Task {
     protected Status status;
     protected Duration duration;
     protected LocalDateTime startTime;
-    final DateTimeFormatter DATA_TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy");
+    final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy");
 
     public Task() {
 
