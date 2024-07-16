@@ -1,5 +1,7 @@
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
@@ -18,17 +20,17 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             bw.write(HEAD_FILE);
             bw.newLine();
 
-            for (Task task : taskHashMap.values()) {
+            for (Task task : getListAllTasks()) {
                 bw.write(converterTasktoString(task));
                 bw.newLine();
             }
 
-            for (Epic task : epicHashMap.values()) {
+            for (Epic task : getListAllEpic()) {
                 bw.write(converterTasktoString(task));
                 bw.newLine();
             }
 
-            for (SubTask task : subTaskHashMap.values()) {
+            for (SubTask task : getListAllSubTasks()) {
                 bw.write(converterTasktoString(task));
                 bw.newLine();
             }
@@ -47,22 +49,32 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         String name = lineArray[2];
         Status status = Status.valueOf(lineArray[3]);
         String description = lineArray[4];
+        LocalDateTime startTime = lineArray[5].equalsIgnoreCase("null") ? null : LocalDateTime.parse(lineArray[5]);
+        Duration duration = lineArray[6].equalsIgnoreCase("null") ? null : Duration.parse(lineArray[6]);
+        LocalDateTime endTime = lineArray[7].equalsIgnoreCase("null") ? null : LocalDateTime.parse(lineArray[7]);
 
         switch (type) {
             case TASK:
                 Task newTask = new Task(name, description, status);
                 newTask.setId(id);
+                newTask.setStartTime(startTime);
+                newTask.setDuration(duration);
                 return newTask;
             case EPIC:
                 Epic newEpic = new Epic(name, description);
                 newEpic.setStatus(status);
                 newEpic.setId(id);
+                newEpic.setStartTime(startTime);
+                newEpic.setDuration(duration);
+                newEpic.setEndTime(endTime);
                 return newEpic;
             case SUBTASK:
                 int epicId = Integer.parseInt(lineArray[8]);
-                Epic epic = epicHashMap.get(epicId);
+                Epic epic = getEpicById(epicId);
                 SubTask newSubTask = new SubTask(name, description, status, epic);
                 newSubTask.setId(id);
+                newSubTask.setStartTime(startTime);
+                newSubTask.setDuration(duration);
                 return newSubTask;
             default:
                 throw new ManagerSaveException("Тип задачи не определен!");
@@ -117,13 +129,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
                 switch (task.getTypeTasks()) {
                     case TASK:
-                        manager.taskHashMap.put(task.getId(), task);
+                        manager.createTask(task);
                         break;
                     case EPIC:
-                        manager.epicHashMap.put(task.getId(), (Epic) task);
+                        manager.createEpic((Epic) task);
                         break;
                     case SUBTASK:
-                        manager.subTaskHashMap.put(task.getId(), (SubTask) task);
+                        manager.createSubTask((SubTask) task);
                         break;
                 }
 

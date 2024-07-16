@@ -3,7 +3,6 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -264,7 +263,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void shouldTrueIfTimeTasksIntersect() {
+    void shouldReturnOneIfTimeTasksIntersect() {
         InMemoryTaskManager memoryTaskManager = new InMemoryTaskManager();
 
         Task firstTask = new Task("Задача1", "Описание задачи 1", Status.NEW);
@@ -275,14 +274,14 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Task secondTask = new Task("Задача1", "Описание задачи 1", Status.NEW);
         secondTask.setStartTime(LocalDateTime.of(2024, 1, 1, 0, 0));
         secondTask.setDuration(Duration.ofMinutes(60));
+        memoryTaskManager.createTask(secondTask);
 
-        boolean result = memoryTaskManager.checkingIntersectionTask(secondTask);
-        assertTrue(result);
+        assertEquals(1,memoryTaskManager.getListAllTasks().size());
 
     }
 
     @Test
-    void shouldFalseTimeTasksNotIntersect() {
+    void shouldReturnTwoIfTimeTasksNotIntersect() {
         InMemoryTaskManager memoryTaskManager = new InMemoryTaskManager();
 
         Task firstTask = new Task("Задача1", "Описание задачи 1", Status.NEW);
@@ -293,9 +292,9 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Task secondTask = new Task("Задача1", "Описание задачи 1", Status.NEW);
         secondTask.setStartTime(LocalDateTime.of(2024, 2, 1, 0, 0));
         secondTask.setDuration(Duration.ofMinutes(60));
+        memoryTaskManager.createTask(secondTask);
 
-        boolean result = memoryTaskManager.checkingIntersectionTask(secondTask);
-        assertFalse(result);
+        assertEquals(2,memoryTaskManager.getListAllTasks().size());
 
     }
 
