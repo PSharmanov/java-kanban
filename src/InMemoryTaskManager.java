@@ -309,10 +309,10 @@ public class InMemoryTaskManager implements TaskManager {
     public List<Integer> getListAllSubTaskByEpicId(int idEpic) {
         Map<Integer, SubTask> subTaskMap = getSubTaskHashMap();
 
-        List<Integer> list = subTaskMap.values().stream().
-                filter(task -> task.getEpic().getId() == idEpic).
-                map(Task::getId).
-                toList();
+        List<Integer> list = subTaskMap.values().stream()
+                .filter(task -> task.getEpic().getId() == idEpic)
+                .map(Task::getId)
+                .toList();
 
         return list;
     }
