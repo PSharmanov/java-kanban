@@ -103,5 +103,9 @@ public class Task {
         return startTime.plus(duration);
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
 
 }

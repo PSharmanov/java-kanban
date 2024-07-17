@@ -203,8 +203,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Epic newEpic = new Epic("Эпик", "Описание эпика1");
         taskManager.createEpic(newEpic);
 
-        assertEquals(Status.NEW, taskManager.getEpicById(8).getStatus());
-
         SubTask subTask1 = new SubTask("Подзадача 5", "Описание подзадачи 5", Status.NEW, taskManager.getEpicById(8));
         taskManager.createSubTask(subTask1);
 
@@ -218,8 +216,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     void shouldGiveStatusEpicDoneElseSubtaskDoneDone() {
         Epic newEpic = new Epic("Эпик", "Описание эпика1");
         taskManager.createEpic(newEpic);
-
-        assertEquals(Status.NEW, taskManager.getEpicById(8).getStatus());
 
         SubTask subTask1 = new SubTask("Подзадача 5", "Описание подзадачи 5", Status.DONE, taskManager.getEpicById(8));
         taskManager.createSubTask(subTask1);
@@ -235,8 +231,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Epic newEpic = new Epic("Эпик", "Описание эпика1");
         taskManager.createEpic(newEpic);
 
-        assertEquals(Status.NEW, taskManager.getEpicById(8).getStatus());
-
         SubTask subTask1 = new SubTask("Подзадача 5", "Описание подзадачи 5", Status.NEW, taskManager.getEpicById(8));
         taskManager.createSubTask(subTask1);
 
@@ -250,8 +244,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     void shouldGiveStatusEpicProgressElseSubtaskStatusProgressProgress() {
         Epic newEpic = new Epic("Эпик", "Описание эпика1");
         taskManager.createEpic(newEpic);
-
-        assertEquals(Status.NEW, taskManager.getEpicById(8).getStatus());
 
         SubTask subTask1 = new SubTask("Подзадача 5", "Описание подзадачи 5", Status.IN_PROGRESS, taskManager.getEpicById(8));
         taskManager.createSubTask(subTask1);

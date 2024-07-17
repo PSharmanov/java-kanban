@@ -2,6 +2,9 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Set;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
@@ -79,6 +82,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             default:
                 throw new ManagerSaveException("Тип задачи не определен!");
         }
+
     }
 
     // преобразование задачи в строку для сохранения в файл
@@ -109,6 +113,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         int idCounter = 0;
 
         FileBackedTaskManager manager = new FileBackedTaskManager(file);
+        Map<Integer, Task> taskHashMap = manager.getTaskHashMap();
+        Map<Integer, SubTask> subTaskHashMap = manager.getSubTaskHashMap();
+        Map<Integer, Epic> epicHashMap = manager.getEpicHashMap();
+        Set<Task> prioritizedTasksSet = manager.getPrioritizedTasksSet();
 
         try (BufferedReader br = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
 
@@ -123,22 +131,31 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 Task task = manager.fromString(line);
 
                 //восстановление последнего значение счетчика id
-                if (task.getId() > idCounter) {
+                if (task.getId() >= idCounter) {
                     manager.setIdCounter(task.getId());
                 }
 
                 switch (task.getTypeTasks()) {
                     case TASK:
-                        manager.createTask(task);
+                        taskHashMap.put(task.getId(), task);
+                        prioritizedTasksSet.addAll(manager.getListAllTasks());
                         break;
                     case EPIC:
-                        manager.createEpic((Epic) task);
+                        epicHashMap.put(task.getId(), (Epic) task);
                         break;
                     case SUBTASK:
-                        manager.createSubTask((SubTask) task);
+                        subTaskHashMap.put(task.getId(), (SubTask) task);
+                        prioritizedTasksSet.addAll(manager.getListAllSubTasks());
                         break;
                 }
 
+            }
+
+            //восстановление списка подзадач эпика
+            for (Epic epic : epicHashMap.values()) {
+                int id = epic.getId();
+                ArrayList<Integer> list = new ArrayList<>(manager.getListAllSubTaskByEpicId(id));
+                epic.setSubTaskArrayList(list);
             }
 
         } catch (IOException e) {
