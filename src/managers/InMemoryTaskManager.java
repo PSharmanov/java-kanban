@@ -1,6 +1,7 @@
 package managers;
 
 import enums.Status;
+import exceptions.NotFoundException;
 import interfaces.HistoryManager;
 import interfaces.TaskManager;
 import models.Epic;
@@ -58,10 +59,10 @@ public class InMemoryTaskManager implements TaskManager {
 
     //создание Задачи
     @Override
-    public void createTask(Task task) {
+    public void createTask(Task task) throws NotFoundException {
 
         if (checkingIntersectionTask(task)) {
-            System.out.println("Задача не создана, задачи имеют пересечение по времени.");
+            throw new NotFoundException("Задача не создана, задачи имеют пересечение по времени.");
         } else {
             task.setId(getIdGenerator());
             taskHashMap.put(task.getId(), task);
@@ -123,12 +124,14 @@ public class InMemoryTaskManager implements TaskManager {
 
     //создание Подзадачи
     @Override
-    public void createSubTask(SubTask subTask) {
+    public void createSubTask(SubTask subTask) throws NotFoundException {
+
+        if (checkingIntersectionTask(subTask)) {
+            throw new NotFoundException("Подзадача не создана, задачи имеют пересечение по времени.");
+        }
 
         if (subTask.getEpic() == null) {
-            System.out.println("ERROR: для Подзадачи не найден Эпик ");
-            return;
-
+            throw new NotFoundException("Подзадача не создана, для подзадачи не найден Эпик ");
         }
 
         if (!checkingIntersectionTask(subTask) && epicHashMap.containsKey(subTask.getEpic().getId())) {
@@ -155,7 +158,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateSubTask(SubTask subTask) {
 
-        if ((!checkingIntersectionTask(subTask) && subTaskHashMap.containsKey(subTask.getId()))) {
+        if ((!checkingIntersectionTask(subTask) && subTaskHashMap.containsValue(subTask))) {
 
             prioritizedTasksSet.remove(getSubTaskById(subTask.getId()));
 
@@ -169,7 +172,11 @@ public class InMemoryTaskManager implements TaskManager {
 
             int index = newSubTaskList.indexOf(subTask.getId());
 
-            newSubTaskList.set(index, subTask.getId());
+            if (index == -1) {
+                newSubTaskList.add(subTask.getId());
+            } else {
+                newSubTaskList.set(index, subTask.getId());
+            }
 
             newEpic.setSubTaskArrayList(newSubTaskList);
 

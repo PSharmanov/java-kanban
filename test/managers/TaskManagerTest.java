@@ -1,4 +1,7 @@
+package managers;
+
 import enums.Status;
+import exceptions.NotFoundException;
 import interfaces.TaskManager;
 import managers.InMemoryTaskManager;
 import models.Epic;
@@ -9,17 +12,19 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class TaskManagerTest<T extends TaskManager> {
+    final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy");
 
     T taskManager;
 
     protected abstract T createTaskManager();
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws NotFoundException {
         taskManager = createTaskManager();
 
         //Создаем две задачи
@@ -57,7 +62,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void shouldCreateTask() {
+    void shouldCreateTask() throws NotFoundException {
         assertEquals(2, taskManager.getListAllTasks().size());
 
         Task task1 = new Task("Задача 1", "Описание задачи1", Status.NEW);
@@ -107,16 +112,16 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void shouldNotCreateSubTaskUntilIsEpic() {
+    void shouldNotCreateSubTaskUntilIsEpic() throws NotFoundException {
         assertEquals(2, taskManager.getListAllTasks().size());
         SubTask subTask1 = new SubTask("Подзадача1", "Описание подзадачи1", Status.NEW, null);
-        taskManager.createSubTask(subTask1);
+        assertThrows(NotFoundException.class,()->taskManager.createSubTask(subTask1));
         assertEquals(2, taskManager.getListAllTasks().size());
 
     }
 
     @Test
-    void shouldCreateSubTaskUntilIsEpic() {
+    void shouldCreateSubTaskUntilIsEpic() throws NotFoundException {
         assertEquals(3, taskManager.getListAllSubTasks().size());
         Epic epic1 = new Epic("Эпик1", "Описание эпик1");
         taskManager.createEpic(epic1);
@@ -205,7 +210,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void shouldGiveTheStatusEpicNEW() {
+    void shouldGiveTheStatusEpicNEW() throws NotFoundException {
         Epic newEpic = new Epic("Эпик", "Описание эпика1");
         taskManager.createEpic(newEpic);
 
@@ -219,7 +224,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void shouldGiveStatusEpicDoneElseSubtaskDoneDone() {
+    void shouldGiveStatusEpicDoneElseSubtaskDoneDone() throws NotFoundException {
         Epic newEpic = new Epic("Эпик", "Описание эпика1");
         taskManager.createEpic(newEpic);
 
@@ -233,7 +238,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void shouldGiveStatusEpicProgressElseSubtaskStatusNewDone() {
+    void shouldGiveStatusEpicProgressElseSubtaskStatusNewDone() throws NotFoundException {
         Epic newEpic = new Epic("Эпик", "Описание эпика1");
         taskManager.createEpic(newEpic);
 
@@ -247,7 +252,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void shouldGiveStatusEpicProgressElseSubtaskStatusProgressProgress() {
+    void shouldGiveStatusEpicProgressElseSubtaskStatusProgressProgress() throws NotFoundException {
         Epic newEpic = new Epic("Эпик", "Описание эпика1");
         taskManager.createEpic(newEpic);
 
@@ -261,7 +266,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void shouldReturnOneIfTimeTasksIntersect() {
+    void shouldReturnOneIfTimeTasksIntersect() throws NotFoundException {
         InMemoryTaskManager memoryTaskManager = new InMemoryTaskManager();
 
         Task firstTask = new Task("Задача1", "Описание задачи 1", Status.NEW);
@@ -272,14 +277,15 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Task secondTask = new Task("Задача1", "Описание задачи 1", Status.NEW);
         secondTask.setStartTime(LocalDateTime.of(2024, 1, 1, 0, 0));
         secondTask.setDuration(Duration.ofMinutes(60));
-        memoryTaskManager.createTask(secondTask);
+
+        assertThrows(NotFoundException.class,()-> memoryTaskManager.createTask(secondTask));
 
         assertEquals(1,memoryTaskManager.getListAllTasks().size());
 
     }
 
     @Test
-    void shouldReturnTwoIfTimeTasksNotIntersect() {
+    void shouldReturnTwoIfTimeTasksNotIntersect() throws NotFoundException {
         InMemoryTaskManager memoryTaskManager = new InMemoryTaskManager();
 
         Task firstTask = new Task("Задача1", "Описание задачи 1", Status.NEW);

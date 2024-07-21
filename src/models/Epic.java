@@ -1,7 +1,9 @@
 package models;
 
+import enums.Status;
 import enums.TypeTasks;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -14,6 +16,19 @@ public class Epic extends Task {
         this.description = description;
         this.subTaskIdList = new ArrayList<>();
 
+    }
+
+    public Epic(String name, String description, int id) {
+        super(name, description, id, null);
+        this.subTaskIdList = new ArrayList<>();
+    }
+
+    public Epic(String name, String description, int id, Status status, Duration duration, LocalDateTime startTime) {
+        super(name, description, id, status, duration, startTime);
+    }
+
+    public Epic(String name, String description, Status status, Duration duration, LocalDateTime startTime) {
+        super(name, description, status, duration, startTime);
     }
 
     //метод возвращает список подзадач Эпика

@@ -3,6 +3,7 @@ package managers;
 import enums.Status;
 import enums.TypeTasks;
 import exceptions.ManagerSaveException;
+import exceptions.NotFoundException;
 import models.Epic;
 import models.SubTask;
 import models.Task;
@@ -175,7 +176,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void createTask(Task task) {
+    public void createTask(Task task) throws NotFoundException {
         super.createTask(task);
         save();
     }
@@ -199,7 +200,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void createSubTask(SubTask subTask) {
+    public void createSubTask(SubTask subTask) throws NotFoundException {
         super.createSubTask(subTask);
         save();
     }

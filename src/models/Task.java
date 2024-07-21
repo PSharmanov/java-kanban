@@ -5,7 +5,6 @@ import enums.TypeTasks;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class Task {
@@ -15,7 +14,6 @@ public class Task {
     protected Status status;
     protected Duration duration;
     protected LocalDateTime startTime;
-    public final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy");
 
     public Task() {
 
@@ -27,6 +25,29 @@ public class Task {
         this.status = status;
     }
 
+    public Task(String name, String description, int id, Status status) {
+        this.name = name;
+        this.description = description;
+        this.id = id;
+        this.status = status;
+    }
+
+    public Task(String name, String description, int id, Status status, Duration duration, LocalDateTime startTime) {
+        this.name = name;
+        this.description = description;
+        this.id = id;
+        this.status = status;
+        this.duration = duration;
+        this.startTime = startTime;
+    }
+
+    public Task(String name, String description, Status status, Duration duration, LocalDateTime startTime) {
+        this.name = name;
+        this.description = description;
+        this.status = status;
+        this.duration = duration;
+        this.startTime = startTime;
+    }
 
     public int getId() {
         return id;
@@ -62,7 +83,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "models.Task{" +
+        return "Task{" +
                 "name='" + name + '\'' +
                 ", description='" + description.length() + '\'' +
                 ", id=" + id +

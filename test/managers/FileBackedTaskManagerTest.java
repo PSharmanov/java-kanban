@@ -1,6 +1,8 @@
+package managers;
+
 import enums.Status;
 import exceptions.ManagerSaveException;
-import managers.FileBackedTaskManager;
+import exceptions.NotFoundException;
 import models.Epic;
 import models.SubTask;
 import models.Task;
@@ -23,7 +25,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
 
     @Override
     protected FileBackedTaskManager createTaskManager() {
-        return new FileBackedTaskManager(new File("test/FileBackedTaskManagerTest.csv"));
+        return new FileBackedTaskManager(new File("test/resources/FileBackedTaskManagerTest.csv"));
     }
 
     @Test
@@ -35,7 +37,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     }
 
     @Test
-    void shouldSaveAndLoadTaskFromFile() throws IOException {
+    void shouldSaveAndLoadTaskFromFile() throws IOException, NotFoundException {
         File tmpFile = createTempFile("testFile", ".csv");
         FileBackedTaskManager manager = FileBackedTaskManager.loadFromFile(tmpFile);
         assertEquals(0, manager.getListAllTasks().size());
@@ -88,20 +90,20 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     }
 
     @Test
-    void shouldRecoverPrioritizedTasksSet() throws IOException {
+    void shouldRecoverPrioritizedTasksSet() throws IOException, NotFoundException {
         File tmpFile = createTempFile("testFile", ".csv");
         FileBackedTaskManager manager = FileBackedTaskManager.loadFromFile(tmpFile);
         assertEquals(0, manager.getPrioritizedTasks().size());
 
         Task task1 = new Task("Задача1", "Описание задачи1", Status.NEW);
-        task1.setStartTime(LocalDateTime.parse("10:00 01.01.2024", task1.dateTimeFormatter));
+        task1.setStartTime(LocalDateTime.parse("10:00 01.01.2024", dateTimeFormatter));
         task1.setDuration(Duration.ofMinutes(30));
         manager.createTask(task1);
 
         manager.createEpic(new Epic("Эпик1", "Описание эпик1"));
 
         SubTask subTask1 = new SubTask("Подзадача1", "Описание подзадачи1", Status.NEW, manager.getEpicById(2));
-        subTask1.setStartTime(LocalDateTime.parse("11:00 01.01.2024", task1.dateTimeFormatter));
+        subTask1.setStartTime(LocalDateTime.parse("11:00 01.01.2024", dateTimeFormatter));
         subTask1.setDuration(Duration.ofMinutes(30));
         manager.createSubTask(subTask1);
 
@@ -112,17 +114,17 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     }
 
     @Test
-    void shouldDelTaskPrioritizedTasksSet() throws IOException {
+    void shouldDelTaskPrioritizedTasksSet() throws IOException, NotFoundException {
         File tmpFile = createTempFile("testFile", ".csv");
         FileBackedTaskManager manager = FileBackedTaskManager.loadFromFile(tmpFile);
 
         Task task1 = new Task("Задача1", "Описание задачи1", Status.NEW);
-        task1.setStartTime(LocalDateTime.parse("10:00 01.01.2024", task1.dateTimeFormatter));
+        task1.setStartTime(LocalDateTime.parse("10:00 01.01.2024", dateTimeFormatter));
         task1.setDuration(Duration.ofMinutes(30));
         manager.createTask(task1);
 
         Task task2 = new Task("Задача1", "Описание задачи1", Status.NEW);
-        task2.setStartTime(LocalDateTime.parse("10:00 02.01.2024", task1.dateTimeFormatter));
+        task2.setStartTime(LocalDateTime.parse("10:00 02.01.2024", dateTimeFormatter));
         task2.setDuration(Duration.ofMinutes(30));
         manager.createTask(task2);
 
@@ -136,13 +138,13 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     }
 
     @Test
-    void shouldRecoverTaskEqualsSaveTasks() throws IOException {
+    void shouldRecoverTaskEqualsSaveTasks() throws IOException, NotFoundException {
         File tmpFile = createTempFile("testFile", ".csv");
         FileBackedTaskManager manager = FileBackedTaskManager.loadFromFile(tmpFile);
         assertEquals(0, manager.getPrioritizedTasks().size());
 
         Task task1 = new Task("Задача1", "Описание задачи1", Status.NEW);
-        task1.setStartTime(LocalDateTime.parse("10:00 01.01.2024", task1.dateTimeFormatter));
+        task1.setStartTime(LocalDateTime.parse("10:00 01.01.2024", dateTimeFormatter));
         task1.setDuration(Duration.ofMinutes(30));
         manager.createTask(task1);
 
@@ -153,13 +155,13 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     }
 
     @Test
-    void shouldRecoverTaskContentEqualsSaveTasksContent() throws IOException {
+    void shouldRecoverTaskContentEqualsSaveTasksContent() throws IOException, NotFoundException {
         File tmpFile = createTempFile("testFile", ".csv");
         FileBackedTaskManager manager = FileBackedTaskManager.loadFromFile(tmpFile);
         assertEquals(0, manager.getPrioritizedTasks().size());
 
         Task task1 = new Task("Задача1", "Описание задачи1", Status.NEW);
-        task1.setStartTime(LocalDateTime.parse("10:00 01.01.2024", task1.dateTimeFormatter));
+        task1.setStartTime(LocalDateTime.parse("10:00 01.01.2024", dateTimeFormatter));
         task1.setDuration(Duration.ofMinutes(30));
         manager.createTask(task1);
 
@@ -178,7 +180,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     }
 
     @Test
-    void shouldRecoverSubTaskContentEqualsSaveSubTasksContent() throws IOException {
+    void shouldRecoverSubTaskContentEqualsSaveSubTasksContent() throws IOException, NotFoundException {
         File tmpFile = createTempFile("testFile", ".csv");
         FileBackedTaskManager manager = FileBackedTaskManager.loadFromFile(tmpFile);
         assertEquals(0, manager.getPrioritizedTasks().size());
@@ -186,7 +188,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
         manager.createEpic(new Epic("Эпик1", "Описание эпик1"));
 
         SubTask subTask1 = new SubTask("Подзадача1", "Описание подзадачи1", Status.NEW, manager.getEpicById(1));
-        subTask1.setStartTime(LocalDateTime.parse("11:00 01.01.2024", subTask1.dateTimeFormatter));
+        subTask1.setStartTime(LocalDateTime.parse("11:00 01.01.2024", dateTimeFormatter));
         subTask1.setDuration(Duration.ofMinutes(30));
         manager.createSubTask(subTask1);
 
@@ -206,7 +208,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     }
 
     @Test
-    void shouldRecoverEpicContentEqualsSaveEpicContent() throws IOException {
+    void shouldRecoverEpicContentEqualsSaveEpicContent() throws IOException, NotFoundException {
         File tmpFile = createTempFile("testFile", ".csv");
         FileBackedTaskManager manager = FileBackedTaskManager.loadFromFile(tmpFile);
         assertEquals(0, manager.getPrioritizedTasks().size());
@@ -215,7 +217,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
         manager.createEpic(epic1);
 
         SubTask subTask1 = new SubTask("Подзадача1", "Описание подзадачи1", Status.NEW, manager.getEpicById(1));
-        subTask1.setStartTime(LocalDateTime.parse("11:00 01.01.2024", subTask1.dateTimeFormatter));
+        subTask1.setStartTime(LocalDateTime.parse("11:00 01.01.2024", dateTimeFormatter));
         subTask1.setDuration(Duration.ofMinutes(30));
         manager.createSubTask(subTask1);
 

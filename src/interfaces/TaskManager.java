@@ -1,5 +1,6 @@
 package interfaces;
 
+import exceptions.NotFoundException;
 import models.Epic;
 import models.SubTask;
 import models.Task;
@@ -8,7 +9,7 @@ import java.util.List;
 
 public interface TaskManager {
     //создание Задачи
-    void createTask(Task task);
+    void createTask(Task task) throws NotFoundException;
 
     //обновление Задачи
     void updateTask(Task task);
@@ -26,7 +27,7 @@ public interface TaskManager {
     void deletingTaskById(int id);
 
     //создание Подзадачи
-    void createSubTask(SubTask subTask);
+    void createSubTask(SubTask subTask) throws NotFoundException;
 
     //обнавление Подзадачи
     void updateSubTask(SubTask subTask);

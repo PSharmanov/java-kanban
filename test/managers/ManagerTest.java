@@ -1,3 +1,5 @@
+package managers;
+
 import interfaces.HistoryManager;
 import interfaces.TaskManager;
 import managers.Manager;
