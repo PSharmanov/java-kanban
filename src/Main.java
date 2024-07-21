@@ -1,3 +1,7 @@
+import interfaces.TaskManager;
+import managers.Manager;
+import models.Task;
+
 public class Main {
 
     public static void main(String[] args) {

@@ -1,3 +1,7 @@
+package models;
+
+import enums.TypeTasks;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 

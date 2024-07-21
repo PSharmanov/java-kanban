@@ -1,3 +1,12 @@
+package managers;
+
+import enums.Status;
+import interfaces.HistoryManager;
+import interfaces.TaskManager;
+import models.Epic;
+import models.SubTask;
+import models.Task;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -44,7 +53,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     //////////////////////////////////////////////////////////////////////////////////
-    // Task
+    // models.Task
 //////////////////////////////////////////////////////////////////////////////////
 
     //создание Задачи
@@ -109,7 +118,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
 //////////////////////////////////////////////////////////////////////////////////
-    // SubTask
+    // models.SubTask
 //////////////////////////////////////////////////////////////////////////////////
 
     //создание Подзадачи
@@ -167,7 +176,7 @@ public class InMemoryTaskManager implements TaskManager {
             updateEpicParameters(newEpic, newSubTaskList);
 
         } else {
-            System.out.println("ERROR: Подзадача с именем: " + subTask.name + "  не обновлена, для подзадачи" +
+            System.out.println("ERROR: Подзадача с именем: " + subTask.getName() + "  не обновлена, для подзадачи" +
                     " нет Эпика.");
         }
 
@@ -239,7 +248,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
 //////////////////////////////////////////////////////////////////////////////////
-    // Epic
+    // models.Epic
 //////////////////////////////////////////////////////////////////////////////////
 
     //создание Эпик

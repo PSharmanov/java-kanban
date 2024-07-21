@@ -1,3 +1,8 @@
+package models;
+
+import enums.Status;
+import enums.TypeTasks;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -10,7 +15,7 @@ public class Task {
     protected Status status;
     protected Duration duration;
     protected LocalDateTime startTime;
-    final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy");
+    public final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy");
 
     public Task() {
 
@@ -21,6 +26,7 @@ public class Task {
         this.description = description;
         this.status = status;
     }
+
 
     public int getId() {
         return id;
@@ -56,7 +62,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
+        return "models.Task{" +
                 "name='" + name + '\'' +
                 ", description='" + description.length() + '\'' +
                 ", id=" + id +

@@ -1,3 +1,12 @@
+package managers;
+
+import enums.Status;
+import enums.TypeTasks;
+import exceptions.ManagerSaveException;
+import models.Epic;
+import models.SubTask;
+import models.Task;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
@@ -16,7 +25,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     // сохранение текущего состояния менеджера в файл
-    void save() {
+    public void save() {
 
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8))) {
 

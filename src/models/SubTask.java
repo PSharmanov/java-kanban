@@ -1,3 +1,8 @@
+package models;
+
+import enums.Status;
+import enums.TypeTasks;
+
 public class SubTask extends Task {
     private Epic epic;
 

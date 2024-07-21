@@ -1,3 +1,9 @@
+import enums.Status;
+import exceptions.ManagerSaveException;
+import managers.FileBackedTaskManager;
+import models.Epic;
+import models.SubTask;
+import models.Task;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -77,6 +83,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
         assertTrue(readOnlyFile.setWritable(false));
         FileBackedTaskManager manager = new FileBackedTaskManager(readOnlyFile);
         assertThrows(ManagerSaveException.class, manager::save);
+        assertTrue(readOnlyFile.setWritable(true));
 
     }
 

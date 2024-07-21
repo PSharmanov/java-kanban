@@ -1,3 +1,8 @@
+package managers;
+
+import interfaces.HistoryManager;
+import models.Task;
+
 import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
