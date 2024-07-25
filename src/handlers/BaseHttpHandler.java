@@ -1,14 +1,9 @@
 package handlers;
 
-import com.google.gson.reflect.TypeToken;
 import com.sun.net.httpserver.HttpExchange;
-import models.Epic;
-import models.SubTask;
-import models.Task;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 public class BaseHttpHandler {
 
@@ -62,14 +57,3 @@ public class BaseHttpHandler {
 
 }
 
-class TasksListTypeToken extends TypeToken<List<Task>> {
-
-}
-
-class SubTasksListTypeToken extends TypeToken<List<SubTask>> {
-
-}
-
-class EpicListTypeToken extends TypeToken<List<Epic>> {
-
-}

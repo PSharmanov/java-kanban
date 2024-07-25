@@ -1,5 +1,6 @@
 package handlers;
 
+import adapters.TasksListTypeToken;
 import com.google.gson.Gson;
 import enums.Status;
 import exceptions.NotFoundException;
