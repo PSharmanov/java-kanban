@@ -10,6 +10,7 @@ import models.Epic;
 import models.SubTask;
 import models.Task;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import server.HttpTaskServer;
@@ -25,15 +26,17 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class EpicHandlerTest {
 
-    TaskManager manager = new InMemoryTaskManager();
-    HttpTaskServer taskServer = new HttpTaskServer(manager);
-    Gson gson = HttpTaskServer.getGson();
-
-    EpicHandlerTest() throws IOException {
-    }
+    TaskManager manager;
+    HttpTaskServer taskServer;
+    Gson gson;
 
     @BeforeEach
     void setUp() throws IOException, InterruptedException {
+
+        manager = new InMemoryTaskManager();
+        taskServer = new HttpTaskServer(manager);
+        gson = HttpTaskServer.getGson();
+
         manager.deletingAllTasks();
         manager.deletingAllSubTasks();
         manager.deletingAllEpics();

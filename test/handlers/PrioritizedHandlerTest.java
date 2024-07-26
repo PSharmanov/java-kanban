@@ -27,15 +27,17 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PrioritizedHandlerTest {
 
-    TaskManager manager = new InMemoryTaskManager();
-    HttpTaskServer taskServer = new HttpTaskServer(manager);
-    Gson gson = HttpTaskServer.getGson();
-
-    PrioritizedHandlerTest() throws IOException {
-    }
+    TaskManager manager;
+    HttpTaskServer taskServer;
+    Gson gson;
 
     @BeforeEach
     void setUp() throws IOException, InterruptedException {
+
+        manager = new InMemoryTaskManager();
+        taskServer = new HttpTaskServer(manager);
+        gson = HttpTaskServer.getGson();
+
         manager.deletingAllTasks();
         manager.deletingAllSubTasks();
         manager.deletingAllEpics();

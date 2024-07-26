@@ -2,7 +2,6 @@ package handlers;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import exceptions.NotFoundException;
 import interfaces.TaskManager;
 import managers.Manager;
@@ -13,7 +12,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
-public class TaskHandler extends BaseHttpHandler implements HttpHandler {
+public class TaskHandler extends BaseHttpHandler {
 
     protected final TaskManager taskManager;
     protected final Gson gson;
@@ -25,7 +24,7 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        try {
+        try (httpExchange) {
             String requestMethod = httpExchange.getRequestMethod();
             System.out.println("Началась обработка " + requestMethod + " /task запроса от клиента.");
 
@@ -44,15 +43,12 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
                     httpExchange.sendResponseHeaders(405, 0);
             }
 
-
         } catch (NotFoundException exception) {
             sendHasInteractions(httpExchange);
             System.out.println(exception.getMessage());
         } catch (Exception exception) {
             String response = exception.getLocalizedMessage();
             sendInternalServerError(httpExchange, response);
-        } finally {
-            httpExchange.close();
         }
 
     }
@@ -107,7 +103,7 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
     }
 
     //обработчик POST
-    private void handlePostRequest(HttpExchange httpExchange) throws IOException, NotFoundException {
+    private void handlePostRequest(HttpExchange httpExchange) throws IOException {
 
         String path = httpExchange.getRequestURI().getPath();
 
@@ -120,7 +116,18 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
 
             Task task = gson.fromJson(body, Task.class);
 
-            taskManager.createTask(task);
+            try {
+
+                taskManager.createTask(task);
+
+            } catch (NotFoundException exception) {
+
+                sendNotFound(httpExchange);
+
+            } catch (RuntimeException exception) {
+
+                sendHasInteractions(httpExchange);
+            }
 
             System.out.println("Запрос обработан, задача создана :" + task);
 

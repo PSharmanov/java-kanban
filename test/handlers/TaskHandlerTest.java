@@ -25,16 +25,17 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TaskHandlerTest {
 
-    TaskManager manager = new InMemoryTaskManager();
-    HttpTaskServer taskServer = new HttpTaskServer(manager);
-    Gson gson = HttpTaskServer.getGson();
-
-    TaskHandlerTest() throws IOException {
-    }
-
+    TaskManager manager;
+    HttpTaskServer taskServer;
+    Gson gson;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws IOException {
+
+        manager = new InMemoryTaskManager();
+        taskServer = new HttpTaskServer(manager);
+        gson = HttpTaskServer.getGson();
+
         manager.deletingAllTasks();
         manager.deletingAllSubTasks();
         manager.deletingAllEpics();
@@ -67,7 +68,7 @@ class TaskHandlerTest {
     }
 
     @Test
-    public void testUpdateTask() throws IOException, InterruptedException, NotFoundException {
+    public void testUpdateTask() throws IOException, InterruptedException {
         manager.createTask(new Task("Test 2", "Testing task 2",
                 Status.NEW, Duration.ofMinutes(5), LocalDateTime.now()));
         Task task = new Task("newTest", "Testing task 2", 1,
@@ -88,7 +89,7 @@ class TaskHandlerTest {
     }
 
     @Test
-    public void shouldCode406CreateTaskIntersectsWithExisting() throws IOException, InterruptedException, NotFoundException {
+    public void shouldCode406CreateTaskIntersectsWithExisting() throws IOException, InterruptedException {
         manager.createTask(new Task("Test 2", "Testing task 2",
                 Status.NEW, Duration.ofMinutes(5), LocalDateTime.now()));
         Task task = new Task("newTest", "Testing task 2",

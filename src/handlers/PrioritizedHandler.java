@@ -2,14 +2,13 @@ package handlers;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import interfaces.TaskManager;
 import managers.Manager;
 
 import java.io.IOException;
 import java.util.regex.Pattern;
 
-public class PrioritizedHandler extends BaseHttpHandler implements HttpHandler {
+public class PrioritizedHandler extends BaseHttpHandler {
 
     protected final TaskManager taskManager;
     protected final Gson gson;
@@ -20,7 +19,7 @@ public class PrioritizedHandler extends BaseHttpHandler implements HttpHandler {
     }
 
     public void handle(HttpExchange httpExchange) throws IOException {
-        try {
+        try (httpExchange) {
             String requestMethod = httpExchange.getRequestMethod();
             System.out.println("Началась обработка " + requestMethod + " /history запроса от клиента.");
 
@@ -49,16 +48,12 @@ public class PrioritizedHandler extends BaseHttpHandler implements HttpHandler {
                     httpExchange.sendResponseHeaders(405, 0);
             }
 
-
         } catch (Exception exception) {
 
             String response = exception.getLocalizedMessage();
 
             sendInternalServerError(httpExchange, response);
 
-        } finally {
-
-            httpExchange.close();
         }
 
     }

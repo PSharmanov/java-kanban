@@ -59,10 +59,14 @@ public class InMemoryTaskManager implements TaskManager {
 
     //создание Задачи
     @Override
-    public void createTask(Task task) throws NotFoundException {
+    public void createTask(Task task) {
+
+        if (task == null) {
+            throw new NotFoundException("Задача не создана! , Некорректные данные для создания задачи");
+        }
 
         if (checkingIntersectionTask(task)) {
-            throw new NotFoundException("Задача не создана, задачи имеют пересечение по времени.");
+            throw new RuntimeException("Задача не создана! Задачи имеют пересечение по времени.");
         } else {
             task.setId(getIdGenerator());
             taskHashMap.put(task.getId(), task);
@@ -124,10 +128,10 @@ public class InMemoryTaskManager implements TaskManager {
 
     //создание Подзадачи
     @Override
-    public void createSubTask(SubTask subTask) throws NotFoundException {
+    public void createSubTask(SubTask subTask) {
 
         if (checkingIntersectionTask(subTask)) {
-            throw new NotFoundException("Подзадача не создана, задачи имеют пересечение по времени.");
+            throw new RuntimeException("Подзадача не создана, задачи имеют пересечение по времени.");
         }
 
         if (subTask.getEpic() == null) {

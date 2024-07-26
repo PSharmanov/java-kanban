@@ -278,7 +278,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         secondTask.setStartTime(LocalDateTime.of(2024, 1, 1, 0, 0));
         secondTask.setDuration(Duration.ofMinutes(60));
 
-        assertThrows(NotFoundException.class,()-> memoryTaskManager.createTask(secondTask));
+        assertThrows(RuntimeException.class,()-> memoryTaskManager.createTask(secondTask));
 
         assertEquals(1,memoryTaskManager.getListAllTasks().size());
 
